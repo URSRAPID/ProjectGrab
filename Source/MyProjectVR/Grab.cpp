@@ -21,17 +21,8 @@ void UGrab::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-
-	if (!PhysicsHandle)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s dosent't have the physics handle component"), *GetOwner()->GetActorLabel());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s dosent't have the physics handle component"), *GetOwner()->GetActorLabel());
-	}
-
+	GetPhysicsHandle();
+	SetUpInputComponent();
 	// ...
 	
 }
@@ -70,7 +61,6 @@ void UGrab::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 		UE_LOG(LogTemp, Warning, TEXT(" OUI"));
 	}
 
-
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
 	if (InputComponent)
@@ -78,6 +68,7 @@ void UGrab::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 
 		UE_LOG(LogTemp, Error, TEXT("Input ready to use! "));
 		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrab::Grab);
+		InputComponent->BindAction("Grab", IE_Released, this, &UGrab::Released);
 	}
 	else
 	{
@@ -93,6 +84,61 @@ void UGrab::Grab()
 	UE_LOG(LogTemp, Warning, TEXT(" missiong inputs component"));
 }
 
+void UGrab::Released()
+{
+	UE_LOG(LogTemp, Warning, TEXT(" missiong inputs component2222"));
+}
+
+void UGrab::GetPhysicsHandle()
+{
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+
+	if (!PhysicsHandle)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s dosent't have the physics handle component"), *GetOwner()->GetActorLabel());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s dosent't have the physics handle component"), *GetOwner()->GetActorLabel());
+	}
+}
+
+void UGrab::SetUpInputComponent()
+{
+	/*InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+
+	if (InputComponent)
+	{
+
+		UE_LOG(LogTemp, Error, TEXT("Input ready to use! "));
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrab::Grab);
+		InputComponent->BindAction("Grab", IE_Released, this, &UGrab::Released);
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Error, TEXT("%s missiong inputs component"), *GetOwner()->GetActorLabel());
+	}*/
+}
+
+
+FVector UGrab::GetReachLineStart()
+{
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+	return PlayerViewPointLocation;
+}
+
+FVector UGrab::GetReachLineEnd()
+{
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+	return PlayerViewPointLocation + PlayerViewPointRotation.Vector() * ReachDistanceLine;
+}
 
 
 

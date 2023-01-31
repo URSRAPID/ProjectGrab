@@ -21,6 +21,15 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	void Grab();
+	void Released();
+	void GetPhysicsHandle();
+	void SetUpInputComponent();
+
+	// Returns current start of reach line
+	FVector GetReachLineStart();
+
+	// Return current end of reach line
+	FVector GetReachLineEnd();
 
 public:	
 	// Called every frame
